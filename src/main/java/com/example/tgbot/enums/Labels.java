@@ -5,6 +5,10 @@ public enum Labels {
     CARDS_LABEL("Карты"),
     CARDS_INFO_LABEL("Мои карты"),
     ADD_CARD_LABEL("Добавить карту"),
+    IMAGE("Картинка"),
+    LINK("Ссылка"),
+    EDIT("Изменить"),
+    DELETE("Удалить"),
     BACK_LABEL("Назад");
 
     private String text;

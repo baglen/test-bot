@@ -1,9 +1,7 @@
 package com.example.tgbot.enums;
 
 public enum Commands {
-    PROFILE("/profile"),
-    CARDS("/cards"),
-    BACK("/back"),
+    EDIT("/изменить"),
     START("/start");
 
     private String command;
