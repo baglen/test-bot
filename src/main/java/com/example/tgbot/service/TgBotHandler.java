@@ -58,9 +58,8 @@ public class TgBotHandler extends TelegramLongPollingBot {
                 }
             }
             else if(text.contains((Commands.EDIT.getCommand()))){
-                EditMessageText editMessage = new EditMessageText();
-                editMessage.setChatId(String.valueOf(chatId));
-                editMessage.setMessageId(update.getMessage().getReplyToMessage().getMessageId());
+                EditMessageText editMessage = new CommandsHandler()
+                        .handleEditCommand(chatId.toString(), update.getMessage().getReplyToMessage().getMessageId());
                 editMessage.setText(text.replace(Commands.EDIT.getCommand()+" ", ""));
                 try {
                     execute(editMessage);
