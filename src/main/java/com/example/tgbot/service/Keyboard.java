@@ -19,7 +19,6 @@ public class Keyboard {
         keyboardRow.add(Labels.IMAGE.getText());
         KeyboardRow keyboardRow1 = new KeyboardRow();
         keyboardRow1.add(Labels.LINK.getText());
-        keyboardRow1.add(Labels.EDIT.getText());
         keyboardRow1.add(Labels.DELETE.getText());
         List<KeyboardRow> rows = new ArrayList<>();
         rows.add(keyboardRow);

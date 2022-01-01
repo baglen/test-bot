@@ -1,10 +1,10 @@
 package com.example.tgbot.enums;
 
 public enum Commands {
-    EDIT("/изменить"),
+    EDIT("/edit"),
     START("/start");
 
-    private String command;
+    private final String command;
 
     Commands(String command) {
         this.command = command;

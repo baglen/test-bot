@@ -2,6 +2,8 @@ package com.example.tgbot.service;
 
 import com.example.tgbot.enums.Commands;
 import com.example.tgbot.enums.Labels;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -18,11 +20,14 @@ import java.io.IOException;
 @Component
 public class TgBotHandler extends TelegramLongPollingBot {
 
+    private static final Logger log = LoggerFactory.getLogger(TgBotHandler.class);
+
     @Value("${telegram.name}")
     private String name;
 
     @Value("${telegram.token}")
     private String token;
+
     @Override
     public String getBotUsername() {
         return name;
@@ -38,57 +43,48 @@ public class TgBotHandler extends TelegramLongPollingBot {
         if (update.hasMessage() && update.getMessage().hasText()) {
             String text = update.getMessage().getText();
             Long chatId = update.getMessage().getChatId();
-            if(text.equals(Labels.IMAGE.getText())) {
+            if (text.equals(Labels.IMAGE.getText())) {
                 try {
                     SendPhoto message = new CommandsHandler().handleImageCommand();
                     message.setParseMode(ParseMode.HTML);
                     message.setChatId(String.valueOf(chatId));
                     execute(message);
                 } catch (IOException | TelegramApiException e) {
-                    SendMessage messageEx = new SendMessage();
-                    messageEx.setText("Ошибка загрузки картинки");
-                    messageEx.enableHtml(true);
-                    messageEx.setParseMode(ParseMode.HTML);
-                    messageEx.setChatId(String.valueOf(update.getMessage().getChatId()));
+                    log.error(e.getLocalizedMessage());
                     try {
-                        execute(messageEx);
+                        execute(new CommandsHandler()
+                                .handleExceptionResponse("Ошибка загрузки картинки", chatId.toString()));
                     } catch (TelegramApiException ex) {
-                        ex.printStackTrace();
+                        log.error(ex.getLocalizedMessage());
                     }
                 }
-            }
-            else if(text.contains((Commands.EDIT.getCommand()))){
+            } else if (text.contains((Commands.EDIT.getCommand()))) {
                 EditMessageText editMessage = new CommandsHandler()
                         .handleEditCommand(chatId.toString(), update.getMessage().getReplyToMessage().getMessageId());
-                editMessage.setText(text.replace(Commands.EDIT.getCommand()+" ", ""));
+                editMessage.setText(text.replace(Commands.EDIT.getCommand() + " ", ""));
                 try {
                     execute(editMessage);
                 } catch (TelegramApiException e) {
-                    e.printStackTrace();
-                    SendMessage messageEx = new SendMessage();
-                    messageEx.setText("Ошибка изменения сообщения");
-                    messageEx.enableHtml(true);
-                    messageEx.setParseMode(ParseMode.HTML);
-                    messageEx.setChatId(String.valueOf(update.getMessage().getChatId()));
+                    log.error(e.getLocalizedMessage());
                     try {
-                        execute(messageEx);
+                        execute(new CommandsHandler()
+                                .handleExceptionResponse("Ошибка изменения сообщения", chatId.toString()));
                     } catch (TelegramApiException ex) {
+                        log.error(ex.getLocalizedMessage());
                         ex.printStackTrace();
                     }
                 }
-            }
-            else if(text.equals(Labels.DELETE.getText())){
+            } else if (text.equals(Labels.DELETE.getText())) {
                 DeleteMessage deleteMessage = new CommandsHandler().handleDeleteCommand(update);
                 try {
                     execute(deleteMessage);
                 } catch (TelegramApiException e) {
                     e.printStackTrace();
                 }
-            }
-            else {
+            } else {
                 try {
                     SendMessage message = new CommandsHandler()
-                            .getCommandResponse(text, update.getMessage().getFrom(), update);
+                            .getCommandResponse(text, update.getMessage().getFrom());
                     message.enableHtml(true);
                     message.setParseMode(ParseMode.HTML);
                     message.setChatId(String.valueOf(chatId));

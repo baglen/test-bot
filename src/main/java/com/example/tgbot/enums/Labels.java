@@ -7,11 +7,10 @@ public enum Labels {
     ADD_CARD_LABEL("Добавить карту"),
     IMAGE("Картинка"),
     LINK("Ссылка"),
-    EDIT("Изменить"),
     DELETE("Удалить"),
     BACK_LABEL("Назад");
 
-    private String text;
+    private final String text;
 
     Labels(String text) {
         this.text = text;
