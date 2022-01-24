@@ -34,8 +34,12 @@ public class CommandsHandler {
             return handleBackCommand();
         }
 
-        if (text.equals(Labels.LINK.getText())) {
+        if (text.equals(Labels.LINK_LABEL.getText())) {
             return handleLinkCommand();
+        }
+
+        if (text.equals(Labels.LOAD_FILE_LABEL.getText())) {
+            return handleLoadFileCommand();
         }
 
         return handleNotFoundCommand();
@@ -43,7 +47,7 @@ public class CommandsHandler {
 
     public SendMessage handleNotFoundCommand() {
         SendMessage message = new SendMessage();
-        message.setText("Команда в разработке");
+        message.setText("Неизвестная команда");
         message.setReplyMarkup(new Keyboard().getMainKeyboard());
         return message;
     }
@@ -89,7 +93,7 @@ public class CommandsHandler {
 
     private SendMessage handleLinkCommand() {
         SendMessage message = new SendMessage();
-        message.setText("http://google.com");
+        message.setText("<a href='https://www.google.com/'>Google</a>");
         //message.setReplyMarkup(new Keyboard().getMainKeyboard());
         return message;
     }
@@ -111,6 +115,12 @@ public class CommandsHandler {
         message.setText(ex);
         message.setReplyMarkup(new Keyboard().getMainKeyboard());
         message.setChatId(chatId);
+        return message;
+    }
+
+    public SendMessage handleLoadFileCommand(){
+        SendMessage message = new SendMessage();
+        message.setText("Отправьте мне нужный файл");
         return message;
     }
 }

@@ -16,10 +16,11 @@ public class Keyboard {
         KeyboardRow keyboardRow = new KeyboardRow();
         keyboardRow.add(Labels.PROFILE_LABEL.getText());
         keyboardRow.add(Labels.CARDS_LABEL.getText());
-        keyboardRow.add(Labels.IMAGE.getText());
+        keyboardRow.add(Labels.IMAGE_LABEL.getText());
         KeyboardRow keyboardRow1 = new KeyboardRow();
-        keyboardRow1.add(Labels.LINK.getText());
-        keyboardRow1.add(Labels.DELETE.getText());
+        keyboardRow1.add(Labels.LINK_LABEL.getText());
+        keyboardRow1.add(Labels.LOAD_FILE_LABEL.getText());
+        keyboardRow1.add(Labels.DELETE_LABEL.getText());
         List<KeyboardRow> rows = new ArrayList<>();
         rows.add(keyboardRow);
         rows.add(keyboardRow1);
