@@ -1,9 +1,9 @@
 package com.example.tgbot.service;
 
+import com.example.tgbot.data.model.ClientFile;
 import com.example.tgbot.data.service.ClientFileService;
 import com.example.tgbot.enums.Commands;
 import com.example.tgbot.enums.Labels;
-import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,14 +16,14 @@ import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.File;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.PhotoSize;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import java.io.FileOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.time.OffsetDateTime;
+import java.io.InputStream;
 import java.util.List;
 
 @Component
@@ -42,6 +42,7 @@ public class TgBotHandler extends TelegramLongPollingBot {
     public TgBotHandler(ClientFileService clientFileService) {
         this.clientFileService = clientFileService;
     }
+
 
     @Override
     public String getBotUsername() {
@@ -67,11 +68,14 @@ public class TgBotHandler extends TelegramLongPollingBot {
                         + filePath.getFileId() + ".png";
                 java.io.File file = downloadFile(filePath, new java.io.File(fileName));
                 clientFileService.saveClientFile(file);
-                SendMessage message = new SendMessage();
-                message.setText("Ваш файл успешно загружен");
-                message.setReplyMarkup(new Keyboard().getMainKeyboard());
-                message.setChatId(String.valueOf(update.getMessage().getChatId()));
-                execute(message);
+                file.delete();
+                ClientFile clientFile = clientFileService.getFileByName(file.getName());
+                InputStream targetStream = new ByteArrayInputStream(clientFile.getFileBytes());
+                SendPhoto photoMessage = new SendPhoto();
+                photoMessage.setCaption("Ваш файл успешно загружен");
+                photoMessage.setChatId(String.valueOf(update.getMessage().getChatId()));
+                photoMessage.setPhoto(new InputFile().setMedia(targetStream, clientFile.getFileName()));
+                execute(photoMessage);
             } catch (Exception e) {
                 e.printStackTrace();
                 log.error(e.getLocalizedMessage());
